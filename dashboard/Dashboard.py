@@ -1,3 +1,5 @@
+import streamlit as st
+import streamlit.components.v1 as stc
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -22,13 +24,13 @@ def create_sum_order_items_df(df):
     sum_order_items_df = df.groupby("payment_type").payment_installments.sum().sort_values(ascending=False).reset_index()
     return sum_order_items_df
 
-def create_bycustomer_city_df(df):
-    bycustomer_city_df = df.groupby(by="customer_city").customer_id.nunique().reset_index()
-    bycustomer_city_df.rename(columns={
+def create_bycustomer_state_df(df):
+    bycustomer_state_df = df.groupby(by="customer_state").customer_id.nunique().reset_index()
+    bycustomer_state_df.rename(columns={
         "customer_id": "customer_count"
     }, inplace=True)
     
-    return bycustomer_city_df
+    return bycustomer_state_df
 
 def create_bypayment_type_df(df):
     bypayment_type_df = df.groupby(by="payment_type").customer_id.nunique().reset_index()
@@ -62,7 +64,7 @@ def create_rfm_df(df):
     
     return rfm_df
 
-all_df = pd.read_csv("d:/Dashboard/all_data.csv")
+all_df = pd.read_csv("all_data.csv")
 
 datetime_columns = ["order_estimated_delivery_date", "order_purchase_timestamp"]
 all_df.sort_values(by="order_purchase_timestamp", inplace=True)
@@ -90,7 +92,7 @@ main_df = all_df[(all_df["order_purchase_timestamp"] >= str(start_date)) &
 
 daily_orders_df = create_daily_orders_df(main_df)
 sum_order_items_df = create_sum_order_items_df(main_df)
-bycustomer_city_df = create_bycustomer_city_df(main_df)
+bycustomer_state_df = create_bycustomer_state_df(main_df)
 bypayment_type_df = create_bypayment_type_df(main_df)
 byorder_status_df = create_byorder_status_df(main_df)
 rfm_df = create_rfm_df(main_df)
@@ -128,7 +130,7 @@ fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(35, 15))
  
 colors = ["#90CAF9", "#D3D3D3", "#D3D3D3", "#D3D3D3", "#D3D3D3"]
  
-sns.barplot(x="payment_installments", y="payment_type", hue="payment_type", data=sum_order_items_df.head(5), palette=colors, ax=ax[0], legend=False)
+sns.barplot(x="payment_installments", y="payment_type", data=sum_order_items_df.head(5), palette=colors, ax=ax[0])
 ax[0].set_ylabel(None)
 ax[0].set_xlabel("Number of Sales", fontsize=30)
 ax[0].set_title("Best Performing Product", loc="center", fontsize=50)
@@ -158,12 +160,12 @@ with col1:
  
     sns.barplot(
         y="customer_count", 
-        x="customer_city",
-        data=bycustomer_city_df.sort_values(by="customer_count", ascending=False),
+        x="customer_state",
+        data=bycustomer_state_df.sort_values(by="customer_count", ascending=False),
         palette=colors,
         ax=ax
     )
-    ax.set_title("Number of Customer by customer city", loc="center", fontsize=50)
+    ax.set_title("Number of Customer by customer state", loc="center", fontsize=50)
     ax.set_ylabel(None)
     ax.set_xlabel(None)
     ax.tick_params(axis='x', labelsize=35)
