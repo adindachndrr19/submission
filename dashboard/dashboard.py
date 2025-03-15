@@ -39,7 +39,7 @@ st.write(filtered_df.describe())
 # Fungsi untuk plot penyewaan berdasarkan musim
 def plot_rentals_by_season(df):
     fig, ax = plt.subplots(figsize=(8, 5))
-    sns.barplot(x='season', y='cnt', data=df, estimator=np.mean, palette='coolwarm', ax=ax)
+    sns.barplot(x='season', y='cnt', data=df, estimator=np.mean, palette='viridis', ax=ax)
     ax.set_xlabel('Musim(Season)')
     ax.set_ylabel('Rata-rata Penyewaan Sepeda')
     ax.set_title('Rata-rata Penyewaan Sepeda Berdasarkan Musim(Season)')
