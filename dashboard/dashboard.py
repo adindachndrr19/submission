@@ -17,7 +17,7 @@ max_date = all_data_df['dteday'].max()
 
 # Membuat Sidebar untuk memfilter rentang waktu
 with st.sidebar:
-    st.image("https://github.com/adindachndrr19/Kasir/blob/main/DBS.png")
+    st.image("https://raw.githubusercontent.com/adindachndrr19/Kasir/blob/main/DBS.png")
     start_date, end_date = st.date_input(
         label='Rentang Waktu', min_value=min_date, max_value=max_date, value=[min_date, max_date]
     )
