@@ -32,9 +32,46 @@ filtered_df['season'] = filtered_df['season'].map(season_mapping)
 filtered_df['weathersit'] = filtered_df['weathersit'].map(weather_mapping)
 
 # Informasi dataset
-st.header('📊 Bike Rent analysis 🚴‍♂️')
-st.subheader('Informasi Gabungan Dataset day.csv dan hour.csv')
-st.write(filtered_df.describe())
+# Menampilkan deskripsi dataset dengan styling, termasuk kolom 'dteday'
+def styled_dataframe_with_date(df):
+    # Statistik untuk kolom numerik
+    numeric_description = df.describe().T  # Transpose untuk format vertikal
+    numeric_description.reset_index(inplace=True)  # Mengubah index menjadi kolom
+    numeric_description.rename(columns={
+        "index": "Kolom",
+        "count": "Count",
+        "mean": "Mean",
+        "std": "Std Dev",
+        "min": "Min",
+        "25%": "25th Percentile",
+        "50%": "Median",
+        "75%": "75th Percentile",
+        "max": "Max"
+    }, inplace=True)
+
+    # Tambahkan statistik khusus untuk kolom 'dteday'
+    date_stats = {
+        "Kolom": ["dteday"],
+        "Count": [len(df['dteday'].dropna())],
+        "Mean": [None],  # Tidak relevan untuk datetime
+        "Std Dev": [None],  # Tidak relevan untuk datetime
+        "Min": [df['dteday'].min().strftime('%Y-%m-%d %H:%M:%S')],  # Format datetime ke string
+        "25th Percentile": [None],  # Tidak relevan untuk datetime
+        "Median": [None],  # Tidak relevan untuk datetime
+        "75th Percentile": [None],  # Tidak relevan untuk datetime
+        "Max": [df['dteday'].max().strftime('%Y-%m-%d %H:%M:%S')]  # Format datetime ke string
+    }
+    date_stats_df = pd.DataFrame(date_stats)
+
+    # Gabungkan statistik datetime dengan statistik numerik
+    combined_df = pd.concat([date_stats_df, numeric_description], ignore_index=True)
+    return combined_df
+
+# Tampilkan tabel statistik deskriptif termasuk 'dteday'
+st.header('📊 Analisis Rental Sepeda 🚴‍♂️')
+st.subheader('Informasi Gabungan Dataset day dan hour.csv')
+styled_df = styled_dataframe_with_date(filtered_df)
+st.dataframe(styled_df)
 
 # Fungsi untuk plot penyewaan berdasarkan musim
 def plot_rentals_by_season(df):
